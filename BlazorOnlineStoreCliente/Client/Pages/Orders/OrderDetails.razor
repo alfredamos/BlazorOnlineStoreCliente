@@ -1,0 +1,60 @@
+﻿@page "/orderDetails/{Id:int}"
+@inherits OrderDetailsBase
+
+
+<h3>Order Details Below:</h3>
+
+<hr />
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Unique ID
+        </dt>
+        <dd class="col-sm-10">
+            @Order.UniqueID
+        </dd>
+        <dt class="col-sm-2">
+            Customer Name
+        </dt>
+        <dd class="col-sm-10">
+            @Order.Customer.CustomerName
+        </dd>
+        <dt class="col-sm-2">
+            City
+        </dt>
+        <dd class="col-sm-10">
+            @Order.Customer.CustomerCity
+        </dd>
+        <dt class="col-sm-2">
+            Province
+        </dt>
+        <dd class="col-sm-10">
+            @Order.Customer.CustomerProvince
+        </dd>
+        <dt class="col-sm-2">
+            Country
+        </dt>
+        <dd class="col-sm-10">
+            @Order.Customer.CustomerCountry
+        </dd>
+        <dt class="col-sm-2">
+            Date Placed
+        </dt>
+        <dd class="col-sm-10">
+            @Order.DatePlaced
+        </dd>
+        <dt class="col-sm-2">
+            Date Processed
+        </dt>
+        <dd class="col-sm-10">
+            @Order.DateProcessed
+        </dd>
+    </dl>
+</div>
+<div>
+    <button type="button" class="btn btn-outline-info" @onclick="UpdateOrder" style="font-weight: Bold">Edit</button>
+    <button type="button" class="btn btn-outline-danger" @onclick="DeleteOrder" style="font-weight: Bold">Delete</button>
+    <button type="button" class="btn btn-outline-info" @onclick="Cancel" style="font-weight: Bold">Cancel</button>
+</div>

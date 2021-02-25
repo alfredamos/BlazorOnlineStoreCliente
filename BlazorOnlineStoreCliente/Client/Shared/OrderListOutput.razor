@@ -1,0 +1,79 @@
+﻿
+<br/>
+<br />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Order Number    : @Order.UniqueID</th>
+            <th>Customer Name   : @Order.Customer.CustomerName</th>
+            <th>Date Placed     : @Order.DatePlaced.ToLongDateString()</th>
+            <th>Customer Total Order</th>
+        </tr>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Sub Total</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Order.OrderLineItems)
+        {
+            SubTotal = item.Price * item.Quantity;
+            var productName = Products.FirstOrDefault(pd => pd.ProductID == item.ProductID).Name;
+            <tr>
+                <td>
+                    <a href="#">@productName</a>
+                </td>
+                <td>@item.Price.ToString("c")</td>
+                <td>@item.Quantity</td>
+                <td>@SubTotal.ToString("c")</td>
+            </tr>
+            Total += SubTotal;
+        }
+        <tr>
+            <td><strong>Total</strong></td>
+            <td></td>
+            <td></td>
+            <td><strong>@Total.ToString("c")</strong></td>
+        </tr>
+    </tbody>
+</table>
+@if (ShowButton)
+{
+    <div colspan="3" class="text-right">
+        <button type="button" style="font-weight: bold" class="btn btn-outline-info btn-rounded" @onclick="@(() => HandleOrderList(Order))">
+            Processed Order
+            <i class="fas fa-angle-right right"></i>
+        </button>
+    </div>
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    public bool ShowButton { get; set; } = false;
+
+    [Parameter]
+    public List<ProductView> Products { get; set; } = new List<ProductView>();
+
+    [Parameter]
+    public OrderView Order { get; set; } = new OrderView();
+
+    [Parameter]
+    public EventCallback<OrderView> OnOrderList { get; set; }
+
+    private double Total = 0.0;
+
+    private double SubTotal = 0.0;
+
+
+    private async Task HandleOrderList(OrderView order)
+    {
+        await OnOrderList.InvokeAsync(order);
+    }
+}

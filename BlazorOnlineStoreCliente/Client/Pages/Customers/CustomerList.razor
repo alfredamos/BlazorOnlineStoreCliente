@@ -1,0 +1,63 @@
+﻿@page "/customerList"
+@inherits CustomerListBase
+
+<br/>
+
+<SearchItem OnSearchItem="HandleSearch" />
+
+<br />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Province</th>
+            <th>Country</th>
+            <th>Update</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Customers == null)
+        {
+            Console.WriteLine("Load.....");
+        }
+        else if (Customers.Count == 0)
+        {
+            Console.WriteLine("No Customer information is available at the moment.");
+        }
+        else
+        {
+            @foreach (var customer in Customers)
+            {
+        <tr>
+            <td>
+                <NavLink style="text-decoration: none" href="@($"/customerDetails/{customer.CustomerID}")">
+                    @customer.CustomerName
+                </NavLink>
+            </td>
+            <td>@customer.Phone</td>
+            <td>@customer.Email</td>
+            <td>@customer.CustomerAddress</td>
+            <td>@customer.CustomerCity</td>
+            <td>@customer.CustomerProvince</td>
+            <td>@customer.CustomerCountry</td>
+            <td><a href="@($"/editCustomer/{customer.CustomerID}")" class="btn btn-outline-info" style="font-weight: bold">Edit</a></td>
+            <td><a href="@($"/deleteCustomer/{customer.CustomerID}")" class="btn btn-outline-danger" style="font-weight: bold">Delete</a></td>
+        </tr>
+            }
+        }
+
+    </tbody>
+</table>
+<div colspan="3" class="text-right">
+    <button type="button" style="font-weight: bold" class="btn btn-outline-info btn-rounded" @onclick="CreateCustomer">
+        Create Customer
+        <i class="fas fa-angle-right right"></i>
+    </button>
+</div>

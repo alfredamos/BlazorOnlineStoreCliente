@@ -1,0 +1,5 @@
+﻿@page "/editCustomer/{Id:int}"
+@inherits EditCustomerBase
+
+<CustomerForm Customer="Customer" UpsertCustomer="UpdateCustomer" CancelMethod="Cancel"
+              UpsertButton="Save" CancelButton="Cancel"/>

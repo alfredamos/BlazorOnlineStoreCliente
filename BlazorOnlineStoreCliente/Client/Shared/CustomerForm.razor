@@ -1,0 +1,84 @@
+﻿
+<EditForm Model="Customer">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="CustomerName" class="form-label">Name</label>
+        <InputText @bind-Value="Customer.CustomerName" class="form-control" placeholder="Name" />
+        <ValidationMessage For="@(() => Customer.CustomerName)" />
+    </div>
+    <div class="form-group">
+        <label for="CustomerAddress" class="form-label">Address</label>
+        <InputText @bind-Value="Customer.CustomerAddress" class="form-control" placeholder="Address" />
+        <ValidationMessage For="@(() => Customer.CustomerAddress)" />
+    </div>
+    <div class="form-group">
+        <label for="CustomerCity" class="form-label">City</label>
+        <InputText @bind-Value="Customer.CustomerCity" class="form-control" placeholder="City" />
+        <ValidationMessage For="@(() => Customer.CustomerCity)" />
+    </div>
+    <div class="form-group">
+        <label for="CustomerProvince" class="form-label">Province</label>
+        <InputText @bind-Value="Customer.CustomerProvince" class="form-control" placeholder="Province" />
+        <ValidationMessage For="@(() => Customer.CustomerProvince)" />
+    </div>
+    <div class="form-group">
+        <label for="CustomerCountry" class="form-label">Country</label>
+        <InputText @bind-Value="Customer.CustomerCountry" class="form-control" placeholder="Country" />
+        <ValidationMessage For="@(() => Customer.CustomerCountry)" />
+    </div>
+    <div class="form-group">
+        <label for="Email" class="form-label">Email</label>
+        <InputText @bind-Value="Customer.Email" class="form-control" placeholder="Email Address" />
+        <ValidationMessage For="@(() => Customer.Email)" />
+    </div>
+    <div class="form-group">
+        <label for="Phone" class="form-label">Phone</label>
+        <InputText @bind-Value="Customer.Phone" class="form-control" placeholder="Phone Number" />
+        <ValidationMessage For="@(() => Customer.Phone)" />
+    </div>
+    <div class="form-group">
+        <InputImage Label="Image" OnSelectedImage="OnSelectedImage" ImageURL="@imageURL" />
+    </div>
+    <div class="form-group">
+        <button type="button" class="btn btn-outline-info" @onclick="UpsertCustomer" style="font-weight: bold">@UpsertButton</button>
+        <button type="button" class="btn btn-outline-info" @onclick="CancelMethod" style="font-weight: bold">@CancelButton</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public CustomerView Customer { get; set; } = new CustomerView();
+
+    [Parameter]
+    public EventCallback UpsertCustomer { get; set; }
+
+    [Parameter]
+    public EventCallback CancelMethod { get; set; }
+
+    [Parameter]
+    public string UpsertButton { get; set; }
+
+    [Parameter]
+    public string CancelButton { get; set; }
+
+    private string imageURL;
+
+    protected override void OnInitialized()
+    {
+
+        if (!string.IsNullOrWhiteSpace(Customer.CustomerPhoto))
+        {
+            imageURL = Customer.CustomerPhoto;
+            Customer.CustomerPhoto = null;
+        }
+
+    }
+
+    private void OnSelectedImage(string imageBase64)
+    {
+        Customer.CustomerPhoto = imageBase64;
+        imageURL = null;
+    }
+
+}
