@@ -24,7 +24,7 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
         [Parameter]
         public string OrderNumber { get; set; }
 
-        public List<Customer> CustomersT { get; set; } = new List<Customer>();
+        public List<CardDetail> CustomersT { get; set; } = new List<CardDetail>();
 
         public List<CustomerView> Customers { get; set; } = new List<CustomerView>();
 

@@ -24,8 +24,7 @@ namespace BlazorOnlineStoreCliente.Client.Helpers
         }
 
         public async Task<Order> UpdateOrder(OrderView orderView)
-        {
-            Console.WriteLine("I'm in UpdateOrder, OrderId : " + orderView.OrderID);
+        {           
             _mapper.Map(orderView, Order);
             Order.DateProcessed = DateTime.Now;
             var order = await _orderService.Update(Order);

@@ -1,8 +1,11 @@
 ﻿@page "/orderList"
 @inherits OrderListBase
 
+<br/>
 
-<br />
+<h1 class="card-header text-center">All Customers Orders</h1>
+
+<br/>
 
 <SearchItem OnSearchItem="HandleSearch" />
 
@@ -18,16 +21,11 @@ else if (Orders.Count == 0)
 }
 else
 {
-    <hr />
-
-    <h1>All Customers Orders : </h1>
-
-    <hr />
-
     @foreach (var order in Orders)
     {
-        <OrderListOutput Order="order" Products="Products" ShowButton="true" OnOrderList="@(() => OrderByDateProcessed(order))"/>        
-                     
+        <OrderListOutput Order="order" Products="Products" ShowProcessedOrderButton="true" OnOrderList="@(() => OrderByDateProcessed(order))" />
+
+        <a href="@($"/customerOrders/{order.CustomerID}")" class="btn btn-outline-info" style="font-weight: bold"><span>@order.Customer.FirstName @order.Customer.LastName's Orders</span></a>
     }
 
 }

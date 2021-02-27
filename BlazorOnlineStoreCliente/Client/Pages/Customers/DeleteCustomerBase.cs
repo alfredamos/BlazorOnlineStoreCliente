@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Blazored.Toast.Services;
 using BlazorOnlineStoreCliente.Client.Contracts;
+using BlazorOnlineStoreCliente.Client.Shared;
 using BlazorOnlineStoreCliente.Client.ViewModels;
 using BlazorOnlineStoreCliente.Shared.Models;
 using Microsoft.AspNetCore.Components;
@@ -19,6 +21,9 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Customers
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
+        public IToastService ToastService { get; set; }
+
+        [Inject]
         public IMapper Mapper { get; set; }
 
         [Parameter]
@@ -28,26 +33,73 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Customers
 
         public CustomerView Customer { get; set; } = new CustomerView();
 
+        protected ConfirmDelete DeleteConfirmation { get; set; }
+
+        public AddressView Address { get; set; } = new AddressView();
+
+        public string NameOfCustomer { get; set; }
+
+        protected bool ShowFooter { get; set; } = false;
+
+        protected bool HideFooter { get; set; } = true;
+
         protected async override Task OnInitializedAsync()
         {
             CustomerT = await CustomerService.GetById(Id);
 
             Mapper.Map(CustomerT, Customer);
+
+            Address = Customer.Addresses.FirstOrDefault(da => da.IsBillingAddress == true ||
+                                         da.IsShippingAddress == da.IsBillingAddress);
+
+            NameOfCustomer = $"{Customer.FirstName} {Customer.LastName}";
         }
 
-        protected async Task DeleteCustomer()
+        protected void DeleteClick()
+        {
+            DeleteConfirmation.Show();
+        }
+
+        protected async Task CustomerToDelete(bool deteConfirmed)
         {
             Mapper.Map(Customer, CustomerT);
 
-            await CustomerService.Delete(Id);
-           
-            NavigationManager.NavigateTo("/customerList");
-           
+            if (deteConfirmed)
+            {
+                await CustomerService.Delete(Id);
+
+                ToastService.ShowSuccess("Customer info is successfully deleted.");
+
+            }
+            NavigationManager.NavigateTo("/listOfCustomers");
+            
+        }
+
+        protected void UpdateCustomer(int customerId)
+        {
+
+            NavigationManager.NavigateTo($"/editCustomer/{customerId}");
+
         }
 
         protected void Cancel()
         {
-            NavigationManager.NavigateTo("/customerList");
+            NavigationManager.NavigateTo("/listOfCustomers");
         }
+
+        protected void ShowFooterMethod()
+        {
+            ShowFooter = true;
+            HideFooter = false;
+            StateHasChanged();
+        }
+
+        protected void HideFooterMethod()
+        {
+            ShowFooter = false;
+            HideFooter = true;
+            StateHasChanged();
+        }
+
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorOnlineStoreCliente.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210128180100_initial")]
+    [Migration("20210221135102_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.1");
+                .HasAnnotation("ProductVersion", "5.0.2");
 
             modelBuilder.Entity("BlazorOnlineStoreCliente.Server.Models.ApplicationUser", b =>
                 {
@@ -86,6 +86,118 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.Address", b =>
+                {
+                    b.Property<int>("AddressID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerAddressID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsBillingAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHomeAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsShippingAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PostCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AddressID");
+
+                    b.HasIndex("CustomerAddressID");
+
+                    b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.BillingAddress", b =>
+                {
+                    b.Property<int>("BillingAddressID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("CardAddressID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBillingAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHomeAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsShippingAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PostCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BillingAddressID");
+
+                    b.HasIndex("CardAddressID")
+                        .IsUnique();
+
+                    b.ToTable("BillingAddresses");
+                });
+
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.CardDetail", b =>
+                {
+                    b.Property<int>("CardDetailID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("CardNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardSecurityNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerCardID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NameOnCard")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CardDetailID");
+
+                    b.HasIndex("CustomerCardID");
+
+                    b.ToTable("CardDetails");
+                });
+
             modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.Customer", b =>
                 {
                     b.Property<int>("CustomerID")
@@ -93,29 +205,26 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("CustomerAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerCity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerCountry")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CustomerPhoto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerProvince")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SameAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("SaveInfo")
+                        .HasColumnType("bit");
 
                     b.HasKey("CustomerID");
 
@@ -211,7 +320,7 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                             ProductID = 1,
                             Brand = "Dolce Gabana",
                             Description = "Shiny Bright Shoe",
-                            ImageLink = "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/shoes%20(2).jpg",
+                            ImageLink = "",
                             Name = "Denim Shoe",
                             Price = 45.0
                         },
@@ -220,7 +329,7 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                             ProductID = 2,
                             Brand = "Givenchy",
                             Description = "Rolex Belt",
-                            ImageLink = "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/belt.jpg",
+                            ImageLink = "",
                             Name = "Rolex Belt",
                             Price = 65.0
                         },
@@ -229,7 +338,7 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                             ProductID = 3,
                             Brand = "Plasmot Special",
                             Description = "Shirt & Shoe",
-                            ImageLink = "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/img%20(4).jpg",
+                            ImageLink = "",
                             Name = "Shirt and Shoe Combo",
                             Price = 70.0
                         },
@@ -238,7 +347,7 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                             ProductID = 4,
                             Brand = "Romano Sport",
                             Description = "Sport Shoe",
-                            ImageLink = "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/shoes%20(3).jp",
+                            ImageLink = "",
                             Name = "Greeno Sport Shoe",
                             Price = 65.0
                         });
@@ -482,6 +591,39 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.Address", b =>
+                {
+                    b.HasOne("BlazorOnlineStoreCliente.Shared.Models.Customer", "Customer")
+                        .WithMany("Addresses")
+                        .HasForeignKey("CustomerAddressID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.BillingAddress", b =>
+                {
+                    b.HasOne("BlazorOnlineStoreCliente.Shared.Models.CardDetail", "Card")
+                        .WithOne("BillingAddress")
+                        .HasForeignKey("BlazorOnlineStoreCliente.Shared.Models.BillingAddress", "CardAddressID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
+                });
+
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.CardDetail", b =>
+                {
+                    b.HasOne("BlazorOnlineStoreCliente.Shared.Models.Customer", "Customer")
+                        .WithMany("CardDetails")
+                        .HasForeignKey("CustomerCardID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.Order", b =>
                 {
                     b.HasOne("BlazorOnlineStoreCliente.Shared.Models.Customer", "Customer")
@@ -561,6 +703,18 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.CardDetail", b =>
+                {
+                    b.Navigation("BillingAddress");
+                });
+
+            modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.Customer", b =>
+                {
+                    b.Navigation("Addresses");
+
+                    b.Navigation("CardDetails");
                 });
 
             modelBuilder.Entity("BlazorOnlineStoreCliente.Shared.Models.Order", b =>

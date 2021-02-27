@@ -1,38 +1,12 @@
 ﻿@page "/customerDetails/{Id:int}"
 @inherits CustomerDetailsBase
 
-<div style="width: 25%">
-    <div class="card text-center">
-        <div class="card-header">
-            <img class="card-img-top" style="width:25%" src="@Customer.CustomerPhoto"
-                 alt="">
-            <hr />
-            <p class="card-text text-left" style="font-weight: bold; color: blue">Phone Number : @Customer.Phone</p>
-            <hr />
-            <p class="card-text text-left" style="font-weight: bold; color: blue">Email Address : @Customer.Email</p>
-        </div>
-        <div class="card-body">
-            @*<h5 class="card-title">Special title treatment</h5>*@
-            <p class="card-text text-left" style="font-weight: bold; cursor: pointer; text-decoration: none !important"><a style="text-decoration: none" href="/customerList">Name : @Customer.CustomerName</a></p>
-            <p class="card-text text-left" style="font-weight: bold; color: blue">Address : @Customer.CustomerAddress</p>
-            <p class="card-text text-left" style="font-weight: bold; color: blue">City : @Customer.CustomerCity</p>
-            <p class="card-text text-left" style="font-weight: bold; color: blue">Province : @Customer.CustomerProvince</p>
-            <p class="card-text text-left" style="font-weight: bold; color: blue">Country : @Customer.CustomerCountry</p>
-        </div>
-        @if (ShowFooter)
-        {
-            <div class="card-footer text-muted">
-                <button type="button" style="font-weight: bold" class="btn btn-outline-info" @onclick="UpdateCustomer">Edit</button>
-                <button type="button" style="font-weight: bold" class="btn btn-outline-danger" @onclick="DeleteCustomer">Delete</button>
-                <button type="button" style="font-weight: bold" class="btn btn-outline-info" @onclick="Cancel">Back</button>
-                <button type="button" style="font-weight: bold" class="btn btn-outline-info" @onclick="HideFooterMethod">Hide Footer</button>
-            </div>
-        }
-        @if (!ShowFooter)
-        {
-            
-            <button type="button" style="font-weight: bold" class="btn btn-outline-info" @onclick="ShowFooterMethod">Show Footer</button>
-            
-        }
-    </div>
-</div>
+
+<DisplayCustomer Address="Address" Customer="Customer" UpdateCustomerL="@(() => UpdateCustomer(Customer.CustomerID))" DeleteClickL="DeleteClick"
+                 ShowFooterMethod="ShowFooterMethod" HideFooterMethod="HideFooterMethod" CancelMethod="Cancel" HideFooter="HideFooter" ShowFooter="ShowFooter"
+                 URL="@("/listOfCustomers")"/>
+
+<ConfirmDelete @ref="DeleteConfirmation" ConfirmationChanged="CustomerToDelete" ConfirmationMessage="@($"Are you sure you want to delete {NameOfCustomer}?")"
+               ConfirmationTitle="Customer Delete Confirmation" />
+
+

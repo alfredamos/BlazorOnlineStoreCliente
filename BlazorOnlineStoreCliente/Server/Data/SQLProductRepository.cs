@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using BlazorOnlineStoreCliente.Server.Contracts;
 using BlazorOnlineStoreCliente.Server.Data;
+using BlazorOnlineStoreCliente.Server.Paging;
 using BlazorOnlineStoreCliente.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BlazorOnlineStoreClient.Server.Data
 {
@@ -50,11 +52,16 @@ namespace BlazorOnlineStoreClient.Server.Data
             return await _context.Products.FindAsync(id);
         }
 
+        public async Task<IPagedList<Product>> GetPagedList(Pagination pagination)
+        {
+            return await _context.Products.ToPagedListAsync(pagination.PageNumber, pagination.PageSize);
+        }
+
         public async Task<IEnumerable<Product>> Search(string searchKey)
         {
             if (string.IsNullOrWhiteSpace(searchKey))
             {
-                return await _context.Products.ToListAsync();
+                return await _context.Products.ToListAsync(); 
             }
             return await _context.Products.Where(prod => prod.Brand.Contains(searchKey) ||
                         prod.Description.Contains(searchKey) || prod.Name.Contains(searchKey) ||

@@ -14,6 +14,7 @@ namespace BlazorOnlineStoreCliente.Client.ViewModels
         [Required]
         public string Name { get; set; }
         [Required]
+        [DataType(DataType.Currency)]
         public double Price { get; set; }
         [Required]
         public string ImageLink { get; set; }

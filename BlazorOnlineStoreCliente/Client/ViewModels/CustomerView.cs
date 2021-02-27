@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlazorOnlineStoreCliente.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,19 +11,20 @@ namespace BlazorOnlineStoreCliente.Client.ViewModels
     {
         public int CustomerID { get; set; }
         [Required]
-        public string CustomerName { get; set; }
+        public string FirstName { get; set; }
         [Required]
-        public string CustomerAddress { get; set; }
+        public string LastName { get; set; }
         [Required]
-        public string CustomerCity { get; set; }
-        [Required]
-        public string CustomerProvince { get; set; }
-        [Required]
-        public string CustomerCountry { get; set; }
-        [Required]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         [Required]
+        [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
         public string CustomerPhoto { get; set; }
+        public bool SameAddress { get; set; } = false;
+        public bool SaveInfo { get; set; } = false;
+        public List<AddressView> Addresses { get; set; }
+        public List<CardDetailView> CardDetails { get; set; }
+
     }
 }

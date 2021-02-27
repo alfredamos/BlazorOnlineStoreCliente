@@ -19,7 +19,7 @@ namespace BlazorOnlineStoreCliente.Client.Helpers
         }
 
         public async Task<Order> CreateOrder(Order order, Customer customer)
-        {
+        {       
             if (_orderCertifyer.ValidateCreateOrder(order, customer))
             {
                 order.DatePlaced = DateTime.Now;
@@ -31,7 +31,7 @@ namespace BlazorOnlineStoreCliente.Client.Helpers
         }
 
         public async Task<Order> UpdateOrder(Order order, Customer customer)
-        {
+        {          
             if (_orderCertifyer.ValidateUpdateOrder(order, customer))
             {               
                 var result = await _orderService.Update(order);

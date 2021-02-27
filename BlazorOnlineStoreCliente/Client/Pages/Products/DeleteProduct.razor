@@ -5,10 +5,7 @@
 
 <hr />
 
-<EditForm Model="Product">
-    <div class="alert-danger">
-        <h3>Do you want to delete @Product.Name?</h3>
-        <button type="button" class="btn btn-outline-danger" @onclick="DeleteProduct" style="font-weight: Bold">Yes, Delete</button>
-        <button type="button" class="btn btn-outline-warning text-white" @onclick="Cancel" style="font-weight: Bold">No, Don't Delete</button>
-    </div>
-</EditForm>
+<DisplayProduct Product="Product" DeleteClick="DeleteClick" CancelMethod="Cancel" ShowDeleteButton="true"/>
+
+<ConfirmDelete @ref="DeleteConfirmation" ConfirmationChanged="DeleteProduct" ConfirmationMessage="@($"Are you sure you want to delete {Product.Name}?")"
+               ConfirmationTitle="Product Delete Confirmation" />

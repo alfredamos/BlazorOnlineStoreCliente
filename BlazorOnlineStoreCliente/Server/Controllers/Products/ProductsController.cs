@@ -152,7 +152,7 @@ namespace BlazorOnlineStoreClient.Server.Controllers.Products
            
         }
 
-        // GET: api/Orders
+        // GET: api/products/searchKey
         [HttpGet("{searchKey}")]
         public async Task<ActionResult<IEnumerable<Product>>> Search(string searchKey)
         {

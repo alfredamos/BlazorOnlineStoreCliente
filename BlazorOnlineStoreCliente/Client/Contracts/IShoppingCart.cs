@@ -17,6 +17,7 @@ namespace BlazorOnlineStoreCliente.Client.Contracts
         void DeleteProductFromOrder(int productId);
         Task<string> PlaceOrder(Order order, Customer customer);
         void EmptyOrder();
-        List<OrderLineItem> GetAllOrderLineItems();
+        List<OrderLineItem> GetAllOrderLineItems();        
+        List<OrderLineItem> GetAllOrderLineItems(List<OrderLineItem> orderLineItems);
     }
 }

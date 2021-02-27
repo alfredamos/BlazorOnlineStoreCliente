@@ -67,7 +67,7 @@ namespace BlazorOnlineStoreCliente.Client.Helpers
         }
       
         public async Task<Order> UpdateOrder(Order order, Customer customer)
-        {
+        {      
             var result = await _placeOrder.UpdateOrder(order, customer );
 
             OrderChange();
@@ -89,6 +89,15 @@ namespace BlazorOnlineStoreCliente.Client.Helpers
 
         public List<OrderLineItem> GetAllOrderLineItems()
         {
+            
+            return OrderLineItems;
+        }
+
+        public List<OrderLineItem> GetAllOrderLineItems(List<OrderLineItem> orderLineItems)
+        {
+            OrderLineItems = orderLineItems;
+            OrderChange();
+
             return OrderLineItems;
         }
     }

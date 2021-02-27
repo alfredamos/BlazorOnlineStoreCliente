@@ -33,10 +33,6 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Products
 
         public Product ProductT { get; set; } = new Product();
 
-        public string ProductName { get; set; }
-
-        public string ProductPrice { get; set; }
-
         protected bool IsShowProduct = true;
 
         protected override async Task OnInitializedAsync()
@@ -45,20 +41,8 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Products
 
             Mapper.Map(ProductT, Product);
 
-            ProductName = Product.Name;
-            ProductPrice = Product.Price.ToString("c");
-
-            //ShoppingCart.OnChange += StateHasChanged;
-       
         }
-
-        //protected void AddToCart()
-        //{                      
-        //    OrderLineItems = ShoppingCart.AddProductToOrder(ProductT, Quantity);
-        //    IsShowProduct = false;
-        //    StateHasChanged();           
-        //}
-
+      
         protected void AddProductToCart(int productId)
         {
             NavigationManager.NavigateTo($"/addToCart/{productId}");
@@ -66,7 +50,7 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Products
 
         protected void Cancel()
         {
-            NavigationManager.NavigateTo("/productList");
+            NavigationManager.NavigateTo("/listOfProducts");
         }
 
     }

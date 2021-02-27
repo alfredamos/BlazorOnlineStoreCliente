@@ -1,4 +1,5 @@
 using AutoMapper;
+using Blazored.Toast;
 using BlazorOnlineStoreCliente.Client.Contracts;
 using BlazorOnlineStoreCliente.Client.Helpers;
 using BlazorOnlineStoreCliente.Client.Mappings;
@@ -32,6 +33,7 @@ namespace BlazorOnlineStoreCliente.Client
 
             builder.Services.AddApiAuthorization();
 
+            builder.Services.AddScoped<ICardDetailService, CardDetailService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IProductService, ProductService>();            
             builder.Services.AddScoped<IShoppingCart, ShoppingCart>();
@@ -40,8 +42,10 @@ namespace BlazorOnlineStoreCliente.Client
             builder.Services.AddScoped<IOrderLineItemService, OrderLineItemService>();
             builder.Services.AddScoped<IPlaceOrder, PlaceOrder>();
             builder.Services.AddScoped<IProcessedOrder, ProcessedOrder>();
+            builder.Services.AddScoped<IAddCardAndAddressToCustomerInfo, AddCardAndAddressToCustomerInfo>();
 
             builder.Services.AddAutoMapper(typeof(Maps));
+            builder.Services.AddBlazoredToast();
 
             builder.Services.Configure<RouteOptions>(options =>
             {

@@ -1,14 +1,12 @@
 ﻿@page "/deleteCustomer/{Id:int}"
 @inherits DeleteCustomerBase
 
-<h3>Delete Product Details</h3>
+<h3>Delete Customer Details</h3>
 
-<hr />
 
-<EditForm Model="Customer">
-    <div class="alert-danger">
-        <h3>Do you want to delete @Customer.CustomerName?</h3>
-        <button type="button" class="btn btn-outline-danger" @onclick="DeleteCustomer" style="font-weight: Bold">Yes, Delete</button>
-        <button type="button" class="btn btn-outline-warning text-white" @onclick="Cancel" style="font-weight: Bold">No, Don't Delete</button>
-    </div>
-</EditForm>
+<DisplayCustomer Address="Address" Customer="Customer" UpdateCustomerL="@(() => UpdateCustomer(Customer.CustomerID))" DeleteClickL="DeleteClick"
+                 ShowFooterMethod="ShowFooterMethod" HideFooterMethod="HideFooterMethod" CancelMethod="Cancel" HideFooter="HideFooter" ShowFooter="ShowFooter"
+                 URL="@("/listOfCustomers")"/>
+
+<ConfirmDelete @ref="DeleteConfirmation" ConfirmationChanged="CustomerToDelete" ConfirmationMessage="@($"Are you sure you want to delete {NameOfCustomer}?")"
+               ConfirmationTitle="Customer Delete Confirmation"/> 

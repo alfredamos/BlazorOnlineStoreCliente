@@ -12,6 +12,10 @@ namespace BlazorOnlineStoreCliente.Client.Mappings
     {
         public Maps()
         {
+            CreateMap<Address, AddressView>().ReverseMap();
+            CreateMap<Address, BillingAddress>().ReverseMap();
+            CreateMap<AddressView, BillingAddress>().ReverseMap();
+            CreateMap<CardDetail, CardDetailView>().ReverseMap();
             CreateMap<Customer, CustomerView>().ReverseMap();
             CreateMap<Order, OrderView>().ReverseMap();
             CreateMap<Product, ProductView>().ReverseMap();

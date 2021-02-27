@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlazorOnlineStoreCliente.Client.Contracts;
+using BlazorOnlineStoreCliente.Client.Shared;
 using BlazorOnlineStoreCliente.Client.ViewModels;
 using BlazorOnlineStoreCliente.Shared.Models;
 using Microsoft.AspNetCore.Components;
@@ -16,23 +17,57 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
         public IOrderService OrderService { get; set; }
 
         [Inject]
+        public IProductService ProductService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
         public IMapper Mapper { get; set; }
 
         [Parameter]
-        public int Id { get; set; }
+        public string OrderNumber { get; set; }
 
-        public OrderView Order { get; set; } = new OrderView();
+        public List<CardDetail> CustomersT { get; set; } = new List<CardDetail>();
 
-        public Order OrderT { get; set; } = new Order();
+        public List<CustomerView> Customers { get; set; } = new List<CustomerView>();
+
+        public List<OrderView> Orders { get; set; } = new List<OrderView>();
+
+        public List<Order> OrdersT { get; set; } = new List<Order>();
+
+        public List<ProductView> Products { get; set; } = new List<ProductView>();
+
+        public List<Product> ProductsT { get; set; } = new List<Product>();
+
+        public ConfirmDelete DeleteConfirmation { get; set; }
+
+        public double SubTotal { get; set; } = 0.0;
+
+        public double Total { get; set; } = 0.0;
 
         protected override async Task OnInitializedAsync()
         {
-            OrderT = await OrderService.GetById(Id);
+            OrdersT = (await OrderService.Search(OrderNumber)).Where(ord => ord.UniqueID == OrderNumber).ToList();
+            ProductsT = (await ProductService.GetAll()).ToList();
 
-            Mapper.Map(OrderT, Order);
+            Mapper.Map(OrdersT, Orders);
+            Mapper.Map(ProductsT, Products);
+        }
+
+        protected void DeleteClick()
+        {
+            DeleteConfirmation.Show();
+        }
+
+        protected async Task DeleteOrder(bool deleteConfirmed)
+        {
+            Mapper.Map(Orders, OrdersT);
+
+            if (deleteConfirmed) await OrderService.Delete(OrdersT[0].OrderID);
+
+            NavigationManager.NavigateTo("/orderList");
+
         }
 
         protected void Cancel()
@@ -40,15 +75,9 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
             NavigationManager.NavigateTo("/orderList");
         }
 
-        protected void DeleteOrder()
-        {
-            NavigationManager.NavigateTo($"/deleteOrder/{Id}");
-        }
-
         protected void UpdateOrder()
         {
-            NavigationManager.NavigateTo($"/editOrder/{Id}");
+            NavigationManager.NavigateTo($"/editOrder/{Orders[0].OrderID}"); 
         }
-
     }
 }

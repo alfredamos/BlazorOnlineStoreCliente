@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using BlazorOnlineStoreCliente.Server.Contracts;
 using BlazorOnlineStoreCliente.Server.Data;
+using BlazorOnlineStoreCliente.Server.Paging;
 using BlazorOnlineStoreCliente.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BlazorOnlineStoreClient.Server.Data
 {
@@ -51,6 +53,11 @@ namespace BlazorOnlineStoreClient.Server.Data
                 .Include(ord => ord.Customer).FirstOrDefaultAsync(ord => ord.OrderID == id);
         }
 
+        public async Task<IPagedList<Order>> GetPagedList(Pagination pagination)
+        {
+            return await _context.Orders.ToPagedListAsync(pagination.PageNumber, pagination.PageSize);
+        }
+
         public async Task<IEnumerable<Order>> Search(string searchKey)
         {
             if (string.IsNullOrWhiteSpace(searchKey))
@@ -59,11 +66,11 @@ namespace BlazorOnlineStoreClient.Server.Data
                          .ToListAsync();
             }
             return await _context.Orders.Include(ord => ord.OrderLineItems).Include(ord => ord.Customer)
-                         .Where(ord => ord.AdminUser.Contains(searchKey) ||
-                         ord.Customer.CustomerAddress.Contains(searchKey) || ord.Customer.CustomerCity.Contains(searchKey) ||
-                         ord.Customer.CustomerCountry.Contains(searchKey) || ord.Customer.CustomerName.Contains(searchKey) ||
-                         ord.Customer.CustomerProvince.Contains(searchKey) || ord.UniqueID.Contains(searchKey) ||
-                         ord.Customer.Email.Contains(searchKey) || ord.Customer.Phone.Contains(searchKey)).ToListAsync();
+                         .Where(ord => ord.AdminUser.Contains(searchKey) || ord.Customer.FirstName.Contains(searchKey)
+                         || ord.UniqueID.Contains(searchKey) || ord.Customer.Email.Contains(searchKey) ||
+                         ord.Customer.Phone.Contains(searchKey) || ord.OrderLineItems.Any(q => q.Product.Brand.Contains(searchKey)) ||
+                         ord.OrderLineItems.Any(q => q.Product.Description.Contains(searchKey)) || ord.OrderLineItems.
+                         Any(q => q.Product.Name.Contains(searchKey))).ToListAsync();
         }
 
         public async Task<Order> Update(Order updatedEntity)

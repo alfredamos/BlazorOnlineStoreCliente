@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Blazored.Toast.Services;
 using BlazorOnlineStoreCliente.Client.Contracts;
+using BlazorOnlineStoreCliente.Client.Shared;
 using BlazorOnlineStoreCliente.Client.ViewModels;
 using BlazorOnlineStoreCliente.Shared.Models;
 using Microsoft.AspNetCore.Components;
@@ -19,6 +21,9 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Products
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
+        public IToastService ToastService { get; set; }
+
+        [Inject]
         public IMapper Mapper { get; set; }
 
         [Parameter]
@@ -28,18 +33,28 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Products
 
         public ProductView Product { get; set; } = new ProductView();
 
+        protected ConfirmDelete DeleteConfirmation { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             ProductT = await ProductService.GetById(Id);
 
             Mapper.Map(ProductT, Product);
+          
         }
 
-        protected async Task DeleteProduct()
+        protected void DeleteClick()
+        {
+            DeleteConfirmation.Show();
+        }
+
+        protected async Task DeleteProduct(bool deleteConfirmed)
         {
             Mapper.Map(Product, ProductT);
 
-            await ProductService.Delete(Id);
+            if (deleteConfirmed) await ProductService.Delete(Id);
+
+            ToastService.ShowSuccess("Product is successfully deleted.");
 
             NavigationManager.NavigateTo("/productList");
            

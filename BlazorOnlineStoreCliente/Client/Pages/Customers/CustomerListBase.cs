@@ -25,9 +25,15 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Customers
 
         public List<CustomerView> Customers { get; set; } = new List<CustomerView>();
 
+        public List<Address> Addresses { get; set; } = new List<Address>();
+
+        public AddressView Address { get; set; } = new AddressView();
+
+        public string FullName { get; set; }
+
         protected async override Task OnInitializedAsync()
         {
-            CustomersT = (await CustomerService.GetAll()).ToList();
+            CustomersT = (await CustomerService.GetAll()).ToList();            
 
             Mapper.Map(CustomersT, Customers);
         }
@@ -41,6 +47,21 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Customers
         protected void CreateCustomer()
         {
             NavigationManager.NavigateTo("/addCustomer");
+        }
+
+        protected void UpdateCustomer(int customerId)
+        {
+            NavigationManager.NavigateTo($"/editCustomer/{customerId}");
+        }
+
+        protected void DeleteCustomer(int customerId)
+        {
+            NavigationManager.NavigateTo($"/deleteCustomer/{customerId}");
+        }
+
+        protected void DetailCustomer(int customerId)
+        {
+            NavigationManager.NavigateTo($"/customerDetails/{customerId}");
         }
     }
 }

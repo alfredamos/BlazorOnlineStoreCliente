@@ -37,8 +37,7 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
         public double SubTotal { get; set; } = 0.0;
 
         protected override async Task OnInitializedAsync()
-        {
-            Console.WriteLine("In processedOrders");
+        {            
             ProductsT = (await ProductService.GetAll()).ToList();
             OrdersT = (await OrderService.GetAll()).Where(od => od.DateProcessed.HasValue)
                       .OrderByDescending(od => od.DateProcessed).ToList();

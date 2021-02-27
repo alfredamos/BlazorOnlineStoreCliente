@@ -133,7 +133,7 @@ namespace BlazorOnlineStoreClient.Server.Controllers.Orders
             }
         }
 
-        // GET: api/Orders
+        // GET: api/Orders/searchKey
         [HttpGet("{searchKey}")]
         public async Task<ActionResult<IEnumerable<Order>>> Search(string searchKey)
         {

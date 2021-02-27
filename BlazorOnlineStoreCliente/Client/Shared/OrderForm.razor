@@ -6,7 +6,8 @@
             <option>Select Customer</option>
             @foreach (var customer in Customers)
             {
-                <option value="@customer.CustomerID">@customer.CustomerName</option>
+                var fullName = customer.FirstName + " " + customer.LastName;
+                <option value="@customer.CustomerID">@fullName</option>
             }
         </CustomInputSelect>
     </div>

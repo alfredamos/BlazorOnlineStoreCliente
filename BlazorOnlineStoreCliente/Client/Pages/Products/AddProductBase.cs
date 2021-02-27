@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Blazored.Toast.Services;
 using BlazorOnlineStoreCliente.Client.Contracts;
 using BlazorOnlineStoreCliente.Client.ViewModels;
 using BlazorOnlineStoreCliente.Shared.Models;
@@ -17,6 +18,9 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Products
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public IToastService ToastService { get; set; }
 
         [Inject]
         public IMapper Mapper { get; set; }
@@ -38,6 +42,8 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Products
 
             if (product != null)
             {
+                ToastService.ShowSuccess("Product is successfully created");
+
                 NavigationManager.NavigateTo("/productList");
             }
         }

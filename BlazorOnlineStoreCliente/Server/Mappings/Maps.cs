@@ -11,6 +11,9 @@ namespace BlazorOnlineStoreCliente.Server.Mappings
     { 
         public Maps()
         {
+            CreateMap<Address, Address>();
+            CreateMap<BillingAddress, BillingAddress>();
+            CreateMap<CardDetail, CardDetail>();
             CreateMap<Customer, Customer>();
             CreateMap<Order, Order>();
             CreateMap<OrderLineItem, OrderLineItem>();

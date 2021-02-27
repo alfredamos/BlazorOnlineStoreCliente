@@ -5,7 +5,7 @@
     <thead>
         <tr>
             <th>Order Number    : @Order.UniqueID</th>
-            <th>Customer Name   : @Order.Customer.CustomerName</th>
+            <th>Customer Name   : @(Order.Customer.FirstName + " " + Order.Customer.LastName)</th>
             <th>Date Placed     : @Order.DatePlaced.ToLongDateString()</th>
             <th>Customer Total Order</th>
         </tr>
@@ -40,15 +40,29 @@
         </tr>
     </tbody>
 </table>
-@if (ShowButton)
-{
-    <div colspan="3" class="text-right">
-        <button type="button" style="font-weight: bold" class="btn btn-outline-info btn-rounded" @onclick="@(() => HandleOrderList(Order))">
+<div colspan="3" class="text-right">
+    @if (ShowProcessedOrderButton)
+    {
+        <button type="button" style="font-weight: bold" class="btn btn-outline-info btn-rounded mr-1" @onclick="@(() => HandleOrderList(Order))">
             Processed Order
             <i class="fas fa-angle-right right"></i>
         </button>
-    </div>
-}
+    }
+    @if (ShowOrderDetailsButton)
+    {
+        <a style="font-weight: bold" class="btn btn-outline-danger btn-rounded mr-1" href="@($"/orderDelete/{Order.UniqueID}")">
+            Delete
+            <i class="fas fa-angle-right right"></i>
+        </a>
+
+        <a style="font-weight: bold" class="btn btn-outline-info btn-rounded" href="@($"/orderDetails/{Order.UniqueID}")">
+            Order Details
+            <i class="fas fa-angle-right right"></i>
+        </a>
+
+    }
+</div>
+
 
 
 
@@ -56,7 +70,10 @@
 
 @code {
     [Parameter]
-    public bool ShowButton { get; set; } = false;
+    public bool ShowProcessedOrderButton { get; set; } = false;
+
+    [Parameter]
+    public bool ShowOrderDetailsButton { get; set; } = true;
 
     [Parameter]
     public List<ProductView> Products { get; set; } = new List<ProductView>();

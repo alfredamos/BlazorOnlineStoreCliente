@@ -148,5 +148,20 @@ namespace BlazorOnlineStoreCliente.Server.Controllers.Customers
             
         }
 
+        // GET: api/customers/searchKey
+        [HttpGet("{searchKey}")]
+        public async Task<ActionResult<IEnumerable<Customer>>> Search(string searchKey)
+        {
+            try
+            {
+                return Ok(await _customerRepository.Search(searchKey));
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database.");
+            }
+        }
+
     }
 }

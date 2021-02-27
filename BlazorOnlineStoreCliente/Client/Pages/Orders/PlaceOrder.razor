@@ -13,56 +13,18 @@ else if (Orders.Count == 0)
 }
 else
 {
-    <hr/>
+    var fullName = $"{Orders[0].Customer.FirstName} {Orders[0].Customer.LastName}";
+    <hr />
 
-    <h1>@Orders[0].Customer.CustomerName order summary : </h1>
+    <h1>@fullName order summary : </h1>
 
-     <hr/>
+    <hr />
 
-     <br/>
-
+    <br />
+        
     @foreach (var order in Orders)
     {
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Order Number    : @order.UniqueID</th>
-                    <th>Customer Name   : @order.Customer.CustomerName</th>
-                    <th>Date Placed     : @order.DatePlaced.ToLongDateString()</th>
-                    <th>Customer Total Order</th>
-                </tr>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Sub Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in order.OrderLineItems)
-                {
-                    SubTotal = item.Price * item.Quantity;
-                    var productName = Products.FirstOrDefault(pd => pd.ProductID == item.ProductID).Name;
-                    <tr>
-                        <td>
-                            <NavLink href="@($"/productDetails/{item.ProductID}")">
-                                @productName
-                            </NavLink>
-                        </td>
-                        <td>@item.Price.ToString("c")</td>
-                        <td>@item.Quantity</td>
-                        <td>@SubTotal.ToString("c")</td>
-                    </tr>
-                    Total += SubTotal;
-                }
-                <tr>
-                    <td><strong>Total</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td><strong>@Total.ToString("c")</strong></td>
-                </tr>
-            </tbody>
-        </table>
-    }
+        <OrderListOutput Order="order" Products="Products" />
 
+    }
 }

@@ -1,11 +1,15 @@
 ﻿@page "/productList"
 @inherits ProductListBase
 
-<br/>
+<br />
+
+<h1 class="card-header text-center">List of Products</h1>
+
+<br />
 
 <SearchItem OnSearchItem="HandleSearch" />
 
-<br/>
+<br />
 
 <table class="table table-bordered">
     <thead>
@@ -31,17 +35,17 @@
         {
             @foreach (var product in Products)
             {
-        <tr>
-            <td>
-                <NavLink style="text-decoration: none" href="@($"/productDetails/{product.ProductID}")">
-                    @product.Name
-                </NavLink>
-            </td>
-            <td>@product.Brand</td>
-            <td>@product.Price.ToString("c")</td>
-            <td><a href="@($"/editProduct/{product.ProductID}")" class="btn btn-outline-info" style="font-weight: bold">Edit</a></td>
-            <td><a href="@($"/deleteProduct/{product.ProductID}")" class="btn btn-outline-danger" style="font-weight: bold">Delete</a></td>
-        </tr>
+                <tr>
+                    <td>
+                        <NavLink style="text-decoration: none" href="@($"/productDetails/{product.ProductID}")">
+                            @product.Name
+                        </NavLink>
+                    </td>
+                    <td>@product.Brand</td>
+                    <td>@product.Price.ToString("c")</td>
+                    <td><a href="@($"/editProduct/{product.ProductID}")" class="btn btn-warning" style="font-weight: bold"><span class="oi oi-pencil"></span></a></td>
+                    <td><a href="@($"/deleteProduct/{product.ProductID}")" class="btn btn-danger" style="font-weight: bold"><span class="oi oi-delete"></span></a></td>
+                </tr>
             }
         }
 

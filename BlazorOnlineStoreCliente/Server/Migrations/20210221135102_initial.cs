@@ -52,14 +52,13 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                 {
                     CustomerID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerCity = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerProvince = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerCountry = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CustomerPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SameAddress = table.Column<bool>(type: "bit", nullable: false),
+                    SaveInfo = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -229,6 +228,56 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    AddressID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsHomeAddress = table.Column<bool>(type: "bit", nullable: false),
+                    IsBillingAddress = table.Column<bool>(type: "bit", nullable: false),
+                    IsShippingAddress = table.Column<bool>(type: "bit", nullable: false),
+                    CustomerAddressID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.AddressID);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Customers_CustomerAddressID",
+                        column: x => x.CustomerAddressID,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CardDetails",
+                columns: table => new
+                {
+                    CardDetailID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameOnCard = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CardSecurityNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerCardID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CardDetails", x => x.CardDetailID);
+                    table.ForeignKey(
+                        name: "FK_CardDetails_Customers_CustomerCardID",
+                        column: x => x.CustomerCardID,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -248,6 +297,33 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                         column: x => x.CustomerID,
                         principalTable: "Customers",
                         principalColumn: "CustomerID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BillingAddresses",
+                columns: table => new
+                {
+                    BillingAddressID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsHomeAddress = table.Column<bool>(type: "bit", nullable: false),
+                    IsBillingAddress = table.Column<bool>(type: "bit", nullable: false),
+                    IsShippingAddress = table.Column<bool>(type: "bit", nullable: false),
+                    CardAddressID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BillingAddresses", x => x.BillingAddressID);
+                    table.ForeignKey(
+                        name: "FK_BillingAddresses_CardDetails_CardAddressID",
+                        column: x => x.CardAddressID,
+                        principalTable: "CardDetails",
+                        principalColumn: "CardDetailID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -284,11 +360,16 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                 columns: new[] { "ProductID", "Brand", "Description", "ImageLink", "Name", "Price" },
                 values: new object[,]
                 {
-                    { 1, "Dolce Gabana", "Shiny Bright Shoe", "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/shoes%20(2).jpg", "Denim Shoe", 45.0 },
-                    { 2, "Givenchy", "Rolex Belt", "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/belt.jpg", "Rolex Belt", 65.0 },
-                    { 3, "Plasmot Special", "Shirt & Shoe", "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/img%20(4).jpg", "Shirt and Shoe Combo", 70.0 },
-                    { 4, "Romano Sport", "Sport Shoe", "https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Orders/shoes%20(3).jp", "Greeno Sport Shoe", 65.0 }
+                    { 1, "Dolce Gabana", "Shiny Bright Shoe", "", "Denim Shoe", 45.0 },
+                    { 2, "Givenchy", "Rolex Belt", "", "Rolex Belt", 65.0 },
+                    { 3, "Plasmot Special", "Shirt & Shoe", "", "Shirt and Shoe Combo", 70.0 },
+                    { 4, "Romano Sport", "Sport Shoe", "", "Greeno Sport Shoe", 65.0 }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_CustomerAddressID",
+                table: "Addresses",
+                column: "CustomerAddressID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -328,6 +409,17 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BillingAddresses_CardAddressID",
+                table: "BillingAddresses",
+                column: "CardAddressID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CardDetails_CustomerCardID",
+                table: "CardDetails",
+                column: "CustomerCardID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",
@@ -374,6 +466,9 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Addresses");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -389,6 +484,9 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "BillingAddresses");
+
+            migrationBuilder.DropTable(
                 name: "DeviceCodes");
 
             migrationBuilder.DropTable(
@@ -402,6 +500,9 @@ namespace BlazorOnlineStoreCliente.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "CardDetails");
 
             migrationBuilder.DropTable(
                 name: "Orders");

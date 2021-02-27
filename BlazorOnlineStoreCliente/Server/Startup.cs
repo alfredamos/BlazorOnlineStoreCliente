@@ -59,6 +59,7 @@ namespace BlazorOnlineStoreCliente.Server
 
             services.AddRazorPages();
 
+            services.AddScoped<ICardDetailRepository, SQLCardDetailRepository>();
             services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
             services.AddScoped<IOrderRepository, SQLOrderRepository>();
             services.AddScoped<IOrderLineItemRepository, SQLOrderLineItemRepository>();

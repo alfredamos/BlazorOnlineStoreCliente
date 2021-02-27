@@ -3,6 +3,10 @@
 
 <br />
 
+<h1 class="card-header text-center">All Processed Orders</h1>
+
+<br />
+
 <SearchItem OnSearchItem="HandleSearch" />
 
 <br />
@@ -17,17 +21,13 @@ else if (Orders.Count == 0)
 }
 else
 {
-    <hr />
-
-    <h1>All Processed Orders : </h1>
-
-    <hr />
-
     @foreach (var order in Orders)
     {
-        <OrderListOutput Order="order" Products="Products"ShowButton="false" />
+        <OrderListOutput Order="order" Products="Products" ShowOrderDetailsButton="false" />
+        <a href="@($"/customerProcessedOrders/{order.CustomerID}")" class="btn btn-outline-info" style="font-weight: bold"><span>@order.Customer.FirstName @order.Customer.LastName's Orders</span></a>
 
     }
 
 }
-
+<br />
+<a href="/orderList" class="btn btn-outline-info"><span class="oi oi-media-skip-backward"> Back to List</span></a>

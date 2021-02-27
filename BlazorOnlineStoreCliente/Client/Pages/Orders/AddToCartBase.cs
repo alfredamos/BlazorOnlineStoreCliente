@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Blazored.Toast.Services;
 using BlazorOnlineStoreCliente.Client.Contracts;
 using BlazorOnlineStoreCliente.Client.ViewModels;
 using BlazorOnlineStoreCliente.Shared.Models;
@@ -14,6 +15,9 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
     public class AddToCartBase : ComponentBase
     {
         [Inject]
+        public ICardDetailService CardDetailService { get; set; }
+
+        [Inject]
         public ICustomerService CustomerService { get; set; }
 
         [Inject]
@@ -24,6 +28,12 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
 
         [Inject]
         public IShoppingCart ShoppingCart { get; set; }
+
+        [Inject]
+        public IToastService ToastService { get; set; }
+
+        [Inject]
+        public IAddCardAndAddressToCustomerInfo AddCardAndAddressToCustomerInfo { get; set; }
 
         [Inject]
         public IMapper Mapper { get; set; }
@@ -39,15 +49,15 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
 
         public int Quantity { get; set; } = 1;
 
-        public string ProductName { get; set; }
-
         protected bool ShowOrder = true;
 
         protected bool ShowCustomerInfo = false;
 
         public List<OrderLineItem> OrderLineItems { get; set; } = new List<OrderLineItem>();
 
-        public List<Product> Products { get; set; } = new List<Product>();
+        public List<Product> ProductsT { get; set; } = new List<Product>();
+
+        public List<ProductView> Products { get; set; } = new List<ProductView>();
 
         public Product Product { get; set; } = new Product();
 
@@ -59,78 +69,96 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
 
         public CustomerView Customer { get; set; } = new CustomerView();
 
+        public AddressView Address { get; set; } = new AddressView();
+
+        public BillingAddress CardAddress { get; set; } = new BillingAddress();
+
+        public List<AddressView> Addresses { get; set; } = new List<AddressView>();
+
+        public CardDetailView CardDetail { get; set; } = new CardDetailView();
+
+        public CardDetail CardDetailT { get; set; } = new CardDetail();
+
+        public List<CardDetailView> CardDetails { get; set; } = new List<CardDetailView>();
+
+        public List<CardDetail> CardDetailsT { get; set; } = new List<CardDetail>();
+
         public List<Customer> CustomersT { get; set; } = new List<Customer>();
 
         public List<CustomerView> Customers { get; set; } = new List<CustomerView>();
 
-        protected double TotalPurchase { get; set; }
-
         public string UserName { get; set; }
 
-        private AuthenticationState authState;
+        //private AuthenticationState authState;
 
         protected override async Task OnInitializedAsync()
-        {
-            authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-
-            if (user.Identity.IsAuthenticated) UserName = user.Identity.Name;
-
-            CustomersT = (await CustomerService.GetAll()).ToList();
-            Mapper.Map(CustomersT, Customers);
-
-            Customer = Customers.FirstOrDefault(cst => cst.Email == UserName);             
-
+        {            
             if (Customer == null) InstantiateNullCustomer(); //----> Initialize the customer with a victitious email to prevent the program from breaking when it is null.
+            
+            ProductsT = (await ProductService.GetAll()).ToList();
+            Mapper.Map(ProductsT, Products);
 
-            Products = (await ProductService.GetAll()).ToList();
-            Product = Products.FirstOrDefault(pd => pd.ProductID == ProductId);
+            Product = ProductsT.FirstOrDefault(pd => pd.ProductID == ProductId);
 
             ShoppingCart.OnChange += StateHasChanged;
+            AddCardAndAddressToCustomerInfo.OnChange += StateHasChanged;
 
             OrderLineItems = ShoppingCart.AddProductToOrder(Product, Quantity);
         }
 
-        protected double TotalPriceOfProducts()
+        protected void UpdateQuantity(OrderLineItem orderLineItem)
         {
-            double totalPurchase = 0.0;
-
-            OrderLineItems = ShoppingCart.GetAllOrderLineItems();
-
-            foreach (var orderLineItem in OrderLineItems)
-                totalPurchase += orderLineItem.Price * orderLineItem.Quantity;
-
-            return totalPurchase;
-        }
-
-        protected void UpdateQuantity(int productId, int quantity)
-        {
+            var productId = orderLineItem.ProductID;
+            var quantity = orderLineItem.Quantity;
             ShoppingCart.UpdateQuantity(productId, quantity);
         }
 
-        protected void RemoveProduct(int productId)
+        protected void RemoveProduct(OrderLineItem orderLineItem)
         {
+            var productId = orderLineItem.ProductID;
             ShoppingCart.DeleteProductFromOrder(productId);
         }
 
 
         protected void PlaceOrder()
-        {            
-            if (CustomerInformationIsNotNull(Customer)) PlacedOrderHelpMethod(Customer);            
-            else
-            {                
-                ShowOrder = false;
-                ShowCustomerInfo = true;                 
-            }
+        {                                      
+            ShowOrder = false;
+            ShowCustomerInfo = true;                 
+           
         }
 
-        protected async void CreateOrder()
+        protected async Task CreateOrder()
         {
-            Mapper.Map(Customer, CustomerT);
-            var customert = (await CustomerService.GetAll()).FirstOrDefault(cus => cus.Email == CustomerT.Email);
-            if ( customert == null) customert = await CustomerService.Add(CustomerT);
-            Mapper.Map(customert, Customer);
-            PlacedOrderHelpMethod(Customer);
+            if (Customer.SameAddress) Address.IsBillingAddress = Address.IsShippingAddress = Customer.SameAddress; //----> Shipping and Billing addresses are same.
+            else Address.IsBillingAddress = true; //----> Billing BillingAddress is used for billing the card.
+
+            CustomersT = (await CustomerService.GetAll()).ToList();
+            Mapper.Map(CustomersT, Customers);
+            Mapper.Map(Address, CardAddress);
+
+            var customer = Customers.FirstOrDefault(xx => xx.Email == Customer.Email);
+
+            if (customer == null)
+            {                
+                Addresses = AddCardAndAddressToCustomerInfo.AddAddressToCustomerInfo(Address);
+                Customer.Addresses = Addresses;
+
+                CardDetails = AddCardAndAddressToCustomerInfo.AddCardDetailsToCustomerInfo(CardDetail, CardAddress);
+                Customer.CardDetails = CardDetails;
+
+                Mapper.Map(Customer, CustomerT);
+            }
+            else
+                Mapper.Map(customer, CustomerT);
+                                             
+            var customert = new Customer();
+            
+            if (customer == null)            
+                customert = await CustomerService.Add(CustomerT);           
+            else if (customer != null)            
+                customert = CustomerT;
+       
+            PlacedOrderHelpMethod(customert);
 
         }
 
@@ -143,44 +171,33 @@ namespace BlazorOnlineStoreCliente.Client.Pages.Orders
 
         protected void ContinueShopping()
         {
-            NavigationManager.NavigateTo("/productList");
+            NavigationManager.NavigateTo("/listOfProducts");
         }
 
         protected void Back()
         {
-            NavigationManager.NavigateTo("/productList");
+            NavigationManager.NavigateTo("/listOfProducts");
         }
 
-        private async void PlacedOrderHelpMethod(CustomerView customer)
-        {
-            Mapper.Map(customer, CustomerT);
-            Mapper.Map(Order, OrderT);
-
-            OrderT.CustomerID = CustomerT.CustomerID;
+        private async void PlacedOrderHelpMethod(Customer customer)
+        {           
+            OrderT.CustomerID = customer.CustomerID;            
             OrderT.AdminUser = "admin";
 
-            var result = await ShoppingCart.PlaceOrder(OrderT, CustomerT);
+            var result = await ShoppingCart.PlaceOrder(OrderT, customer);
 
             if (result != null)
             {
+                ToastService.ShowSuccess("Customer order is successfully created");
+
                 NavigationManager.NavigateTo($"/placeOrder/{result}");
             }
         }
-
-        protected bool CustomerInformationIsNotNull(CustomerView customer)
-        {
-            if (string.IsNullOrWhiteSpace(customer.CustomerName) || string.IsNullOrWhiteSpace(customer.CustomerAddress) ||
-                string.IsNullOrWhiteSpace(customer.CustomerCity) || string.IsNullOrWhiteSpace(customer.CustomerProvince) ||
-                string.IsNullOrWhiteSpace(customer.CustomerCountry) || string.IsNullOrWhiteSpace(customer.Email) ||
-                string.IsNullOrWhiteSpace(customer.Phone)) return false;
-
-            return true;
-        }
-
+       
         private void InstantiateNullCustomer()
-        {
-            if (Customer == null) Customer = new CustomerView { Email = "joedoe@gmail.com" }; //----> Initialize the customer with a victitious email to prevent the program from breaking when it is null.
+        {            
+            Customer = new CustomerView { Email = "joedoe@gmail.com", Phone = "2378345617" }; //----> Initialize the customer with a victitious email to prevent the program from breaking when it is null.            
         }
-
+        
     }
 }

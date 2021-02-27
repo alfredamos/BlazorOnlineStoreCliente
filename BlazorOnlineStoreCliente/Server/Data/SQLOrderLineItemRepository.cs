@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using BlazorOnlineStoreCliente.Server.Contracts;
+using BlazorOnlineStoreCliente.Server.Paging;
 using BlazorOnlineStoreCliente.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace BlazorOnlineStoreCliente.Server.Data
 {
@@ -64,11 +66,10 @@ namespace BlazorOnlineStoreCliente.Server.Data
                 return await _context.OrderLineItems.Include(ordl => ordl.Product)
                 .Include(ordl => ordl.Order).ToListAsync();
             }
-            return await _context.OrderLineItems.Include(ordl => ordl.Product)
-                .Include(ordl => ordl.Order).Where(ordl => ordl.Order.AdminUser.Contains(searchKey) ||
-                ordl.Order.Customer.CustomerAddress.Contains(searchKey) || ordl.Order.Customer.CustomerCity.Contains(searchKey) ||
-                ordl.Order.Customer.CustomerCountry.Contains(searchKey) || ordl.Order.Customer.CustomerName.Contains(searchKey) ||
-                ordl.Order.Customer.CustomerProvince.Contains(searchKey) || ordl.Product.Brand.Contains(searchKey) ||
+            return await _context.OrderLineItems.Include(ordl => ordl.Product).Include(ordl => ordl.Order)
+                .Where(ordl => ordl.Order.AdminUser.Contains(searchKey) || ordl.Order.Customer.Phone.Contains(searchKey) ||
+                ordl.Order.Customer.FirstName.Contains(searchKey) || ordl.Product.Brand.Contains(searchKey) ||
+                ordl.Order.Customer.LastName.Contains(searchKey) || ordl.Order.Customer.Email.Contains(searchKey) ||
                 ordl.Product.Description.Contains(searchKey) || ordl.Product.Name.Contains(searchKey)).ToListAsync();
 
         }
@@ -82,6 +83,11 @@ namespace BlazorOnlineStoreCliente.Server.Data
             await _context.SaveChangesAsync();
 
             return result;
+        }
+
+        public async Task<IPagedList<OrderLineItem>> GetPagedList(Pagination pagination)
+        {
+            return await _context.OrderLineItems.ToPagedListAsync(pagination.PageNumber, pagination.PageSize);
         }
     }
 }
